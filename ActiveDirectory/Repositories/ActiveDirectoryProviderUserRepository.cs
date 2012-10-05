@@ -8,6 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Web.Profile;
 
 using Microsoft.IdentityModel.Claims;
+
 using Thinktecture.IdentityServer.TokenService;
 using Thinktecture.IdentityServer.Repositories;
 
@@ -27,11 +28,11 @@ namespace ThinkTecture.IdentityServer.Contrib.ActiveDirectory.Repositories
             Container.Current.SatisfyImportsOnce(this);
         }
 
-        public bool ValidateUser(string userName, string password)
+        virtual public bool ValidateUser(string userName, string password)
         {
             using (PrincipalContext context = GetPrincipalContext())
             {
-                return context.ValidateCredentials(userName, password);
+                return context.ValidateCredentials(userName, password, ContextOptions.Negotiate);
             }
         }
 
@@ -58,7 +59,7 @@ namespace ThinkTecture.IdentityServer.Contrib.ActiveDirectory.Repositories
             return returnedRoles;
         }
 
-        public IEnumerable<Microsoft.IdentityModel.Claims.Claim> GetClaims(IClaimsPrincipal principal, RequestDetails requestDetails)
+        virtual public IEnumerable<Claim> GetClaims(IClaimsPrincipal principal, RequestDetails requestDetails)
         {
             var claims = new List<Claim>();
 
@@ -100,7 +101,7 @@ namespace ThinkTecture.IdentityServer.Contrib.ActiveDirectory.Repositories
             return claims;
         }
 
-        public IEnumerable<string> GetSupportedClaimTypes()
+        virtual public IEnumerable<string> GetSupportedClaimTypes()
         {
             var claimTypes = new List<string>
             {
